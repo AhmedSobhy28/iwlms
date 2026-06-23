@@ -2,15 +2,27 @@
 
 use App\Models\User;
 
-test('guests are redirected to the login page', function () {
-    $response = $this->get('/dashboard');
-    $response->assertRedirect('/login');
+test('guests are redirected to the student login page', function () {
+    $response = $this->get('/student/dashboard');
+    $response->assertRedirect('/student/login');
 });
 
-test('authenticated users can visit the dashboard', function () {
-    $user = User::factory()->create();
+test('students can visit the student dashboard', function () {
+    seedRoles();
+
+    $user = User::factory()->student()->create();
     $this->actingAs($user);
 
-    $response = $this->get('/dashboard');
+    $response = $this->get('/student/dashboard');
     $response->assertStatus(200);
+});
+
+test('admins cannot visit the student dashboard', function () {
+    seedRoles();
+
+    $user = User::factory()->admin()->create();
+    $this->actingAs($user);
+
+    $response = $this->get('/student/dashboard');
+    $response->assertForbidden();
 });

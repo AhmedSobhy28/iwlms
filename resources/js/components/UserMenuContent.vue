@@ -4,12 +4,21 @@ import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSep
 import type { User } from '@/types';
 import { Link } from '@inertiajs/vue3';
 import { LogOut, Settings } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface Props {
     user: User;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
+
+const logoutRoute = computed(() => {
+    if (props.user.roles?.includes('admin')) {
+        return route('admin.logout');
+    }
+
+    return route('student.logout');
+});
 </script>
 
 <template>
@@ -29,7 +38,7 @@ defineProps<Props>();
     </DropdownMenuGroup>
     <DropdownMenuSeparator />
     <DropdownMenuItem :as-child="true">
-        <Link class="block w-full" method="post" :href="route('logout')" as="button">
+        <Link class="block w-full" method="post" :href="logoutRoute" as="button">
             <LogOut class="mr-2 h-4 w-4" />
             Log out
         </Link>
